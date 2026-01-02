@@ -1,0 +1,23 @@
+# Build artifacts
+build/
+*.o
+*.elf
+*.img
+*.a
+*.so
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# System files
+*.tmp
+*.log
+
+# Temporary files
+*.bak
+stubs.c

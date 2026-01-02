@@ -1,0 +1,116 @@
+#!/bin/bash
+# Development helper script
+# Builds kernel and provides utilities
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$SCRIPT_DIR"
+
+cd "$PROJECT_DIR"
+
+case "${1:-help}" in
+    build)
+        echo "Building Raspberry Pi 5 OS..."
+        bash "$SCRIPT_DIR/scripts/build.sh"
+        ;;
+    
+    clean)
+        bash "$SCRIPT_DIR/scripts/clean.sh"
+        ;;
+    
+    rebuild)
+        bash "$SCRIPT_DIR/scripts/clean.sh"
+        bash "$SCRIPT_DIR/scripts/build.sh"
+        ;;
+    
+    dump)
+        if [ ! -f "build/kernel.elf" ]; then
+            echo "Error: kernel.elf not found. Run './dev build' first."
+            exit 1
+        fi
+        echo "Disassembly of kernel.elf:"
+        aarch64-linux-gnu-objdump -d build/kernel.elf | head -100
+        ;;
+    
+    info)
+        if [ ! -f "build/kernel.elf" ]; then
+            echo "Error: kernel.elf not found. Run './dev build' first."
+            exit 1
+        fi
+        echo "Kernel Info:"
+        aarch64-linux-gnu-readelf -h build/kernel.elf
+        aarch64-linux-gnu-readelf -l build/kernel.elf
+        ;;
+    
+    flash)
+        if [ $# -lt 2 ]; then
+            echo "Usage: $0 flash <device>"
+            echo "Example: $0 flash /dev/sdb"
+            exit 1
+        fi
+        
+        if [ ! -f "build/kernel.img" ]; then
+            echo "Error: kernel.img not found. Run './dev build' first."
+            exit 1
+        fi
+        
+        DEVICE="$2"
+        if [ ! -b "$DEVICE" ]; then
+            echo "Error: Device not found: $DEVICE"
+            exit 1
+        fi
+        
+        echo "WARNING: This will write to $DEVICE"
+        read -p "Continue? (yes/no) " -n 3 -r
+        echo
+        if [[ $REPLY =~ ^[Yy][Ee][Ss]$ ]]; then
+            sudo dd if=build/kernel.img of="$DEVICE" bs=4M
+            sync
+            echo "Flash complete!"
+        fi
+        ;;
+    
+    image)
+        echo "Creating complete bootable SD card image..."
+        bash "$SCRIPT_DIR/scripts/create-full-image.sh"
+        ;;
+    
+    image-full)
+        echo "Creating detailed SD card image with all components..."
+        bash "$SCRIPT_DIR/scripts/create-image.sh"
+        ;;
+    
+    help|*)
+        cat << 'EOF'
+Raspberry Pi 5 OS Development Helper
+
+Usage: ./dev [command]
+
+Commands:
+  build           - Build the kernel
+  clean           - Remove build artifacts
+  rebuild         - Clean and build
+  dump            - Show disassembly of kernel.elf
+  info            - Show kernel ELF information
+  flash <dev>     - Flash kernel to SD card device
+  image           - Create bootable SD card image (.img file)
+  image-full      - Create full SD image with filesystem
+  help            - Show this help message
+
+Examples:
+  ./dev build
+  ./dev image
+  ./dev flash /dev/sdb
+
+Image Examples:
+  # Create .img file
+  ./dev image
+
+  # Flash .img file to SD card
+  dd if=build/rpi5-os.img of=/dev/sdb bs=4M status=progress
+  sync
+
+  # Or use dev script directly
+  ./dev flash /dev/sdb
+EOF
+        ;;
+esac

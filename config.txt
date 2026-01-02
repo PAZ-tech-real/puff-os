@@ -1,0 +1,70 @@
+# Raspberry Pi 5 Boot Configuration
+# This file controls how the Pi5 firmware boots the kernel
+
+# Display settings
+hdmi_blanking=1
+hdmi_drive=2
+
+# Enable UART for serial debug console
+enable_uart=1
+
+# GPU memory allocation (in MB)
+gpu_mem=64
+
+# ARM CPU frequency (in MHz)
+arm_freq=2400
+
+# Disable GPU overclocking
+force_turbo=0
+
+# Device tree settings
+device_tree=bcm2712-rpi-5-b.dtb
+device_tree_address=0x2eff0000
+
+# Kernel image settings
+kernel=kernel.img
+kernel_address=0x80000
+kernel_old=0
+
+# Load kernel at this address
+ramfsfile=
+ramfsaddr=
+
+# Camera auto-detection
+camera_auto_detect=1
+display_auto_detect=1
+
+# Enable HDMI hotplug detection
+hdmi_safe=0
+
+# Standard settings
+boot_delay=1
+boot_delay_ms=0
+
+# Enable SPI/I2C/UART interfaces
+dtparam=i2c_arm=on
+dtparam=spi=on
+
+# Enable audio
+audio_pwm_mode=2
+
+# Set the bootloader timeout (ms)
+total_mem=8192
+
+# Suppress warnings
+avoid_warnings=0
+
+# Additional debug settings
+dtdebug=0
+
+# Memory test
+memtest=0
+
+# Disable splash screen
+disable_splash=1
+
+# Enable 64-bit boot
+arm_64bit=1
+
+# Set GPU clock
+gpu_freq=500
