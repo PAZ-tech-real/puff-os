@@ -1,7 +1,10 @@
-bits 16
-org 0x7C00
+; stage2.asm
+BITS 16
+ORG 0x8000
 
 start:
+    mov ax, 0x0013
+    int 0x10
 ; read sector 2 from first HDD (0x80) into buffer
     mov ah,0x02        ; BIOS: read sectors
     mov al,1           ; number of sectors
@@ -11,8 +14,6 @@ start:
     mov dl,0x80        ; drive = first HDD
     mov bx,slot        ; buffer to store data
     int 13h
-    mov ax,0x03
-    int 0x10
     call boot_sound
     mov si,msg_start
     call print
@@ -229,8 +230,5 @@ cmd_shut db 'shutdown',0
 msg_start db 'puff-OS',0
 msg_unknown db 'Unknown',0
 
-buf  times 12 db 0
-slot times 32 db 0
-
-times 510-($-$$) db 0
-dw 0xAA55
+buf  times 10 db 0
+slot times 100 db 0
