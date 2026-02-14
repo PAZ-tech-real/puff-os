@@ -1,9 +1,3 @@
-### 1.1 notes and warnings
+### 1.2 notes
 
-run on floopy disc
-
-input saves to hdd sector 2 wich may overwrite mbr data in your OS
-
-new computers may need compatiblty mode
-
-it will work with x86 and x86_64
+we now are useing 2 stage booting to increse the kernal size
