@@ -55,6 +55,12 @@ shell:
     cmp al,1
     je do_shutdown
 
+    mov si,buf
+    mov di,cmd_lock
+    call cmp
+    cmp al,1
+    je do_reboot
+
     mov si,msg_unknown
     call nl
     call print
@@ -221,6 +227,7 @@ nl:
 
 ; --- data ---
 prompt db '> ',0
+cmd_lock db 'lock',0
 cmd_in db 'input',0
 cmd_echo db 'echo',0
 cmd_read db 'read',0
